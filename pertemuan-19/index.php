@@ -14,6 +14,7 @@ while($res = mysqli_fetch_assoc($admin)){
 $data = mysqli_query($conn, "SELECT * FROM karyawan WHERE id_admin=$id");
 
 if($_POST){
+  if($_GET['judul'] == 'Tambah'){
     $nama = $_POST['nama'];
     $jabatan = $_POST['jabatan'];
     $email = $_POST['email'];
@@ -21,9 +22,36 @@ if($_POST){
 
     if ($add) {
         $data = mysqli_query($conn, "SELECT * FROM karyawan WHERE id_admin=$id");
+        echo "<script> alert('Data Berhasil Ditambahkan!') </script>";
     }else {
         echo "Error connecting : " . mysqli_error($conn);
     }
+}elseif($_GET['judul'] == 'Edit'){
+
+    $id_edit = $_GET['id'];
+    $nama = $_POST['nama'];
+    $jabatan = $_POST['jabatan'];
+    $email = $_POST['email'];
+    $add = mysqli_query($conn, "UPDATE karyawan SET nama='$nama', jabatan='$jabatan', email='$email', id_admin='$id' WHERE id=$id_edit");
+
+    if ($add) {
+        $data = mysqli_query($conn, "SELECT * FROM karyawan WHERE id_admin=$id");
+        echo "<script> alert('Data Berhasil Diupdate!') </script>";
+    }else {
+        echo "Error connecting : " . mysqli_error($conn);
+    }
+}
+}
+elseif(isset($_GET["delete"])){
+  $id_delete = $_GET["delete"];
+  $delete = mysqli_query($conn, "DELETE FROM karyawan WHERE id=$id_delete");
+
+  if($delete){
+    $data = mysqli_query($conn, "SELECT * FROM karyawan WHERE id_admin=$id");
+  }
+  else {
+    echo "Error connecting : " . mysqli_error($conn);
+}
 }
 
 ?>
@@ -38,13 +66,16 @@ if($_POST){
    
     <!-- FA -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-</head>
+    <!-- DT -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+
+  </head>
 <body>
 <nav class="navbar bg-dark">
 <div class="container" style="display: inline-block">
     <a class="navbar-brand" href="#" style="color: gray">
     <i class="fa-solid fa-robot"></i>
-    Pradipta
+    <?= $name ?>
     </a>
         
     <i class="fa-solid fa-grip-lines-vertical" style="color: gray"></i>
@@ -57,17 +88,17 @@ if($_POST){
   </div>
 </nav>
 <div class="container pt-4" style="padding-right: 30%">
-<h3 style="margin-top: 40px">Berikut data para pejabat :</h3>
-<h3 style="margin-top: 40px">Welcome <?= $name ?></h3>
+  <h1 style="margin-top: 40px; color: grey">Welcome <?= $name ?></h1>
+<h3 style="margin-top: 40px; color: gray">Berikut data para pejabat :</h3>
 <br>
 
-<a href="form.php" class="btn btn-dark">
+<a href="form.php?judul=Tambah" class="btn btn-dark">
 <i class="fa-solid fa-user-plus"></i>
 Tambah Pejabat
 </a>
 <br><br>
 
-<table class="table table-dark table-striped">
+<table class="table table-dark table-striped" id="data" style="padding-top:20px;">
   <thead>
     <tr>
       <th scope="col">ID</th>
@@ -85,16 +116,25 @@ Tambah Pejabat
         <td><?= $row['email']; ?></td>
         <td><?= $row['jabatan']; ?></td>
       <td>
-        <button type="button" class="btn btn-success"><i class="fa-solid fa-pen-to-square"></i></button>
-        <button type="button" class="btn btn-danger"><i class="fa-solid fa-user-slash"></i></button>
+        <a type="button" class="btn btn-success" href="form.php?judul=Edit&id=<?= $row['id'] ?>"><i class="fa-solid fa-pen-to-square"></i></a>
+        <a type="button" class="btn btn-danger" href="?delete=<?= $row['id'] ?>"><i class="fa-solid fa-user-slash"></i></a>
       </td>
     </tr>
     <?php } ?>
   </tbody>
 </table>
 </div>
+<br><br><br>
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script>
+
+$(document).ready(function () {
+    $('#data').DataTable();
+});
+</script>
 </body>
 </html>

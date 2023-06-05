@@ -1,5 +1,26 @@
 <?php
 
+$conn = mysqli_connect("localhost", "root", "", "latihan_2");
+$judul = $_GET['judul'];
+
+if(isset($_GET['id'])){
+  $id = $_GET['id'];
+}
+
+if($judul == 'Edit'){
+  $link = "index.php?judul=$judul&id=$id";
+  $data = mysqli_query($conn, "SELECT * FROM karyawan WHERE id=$id");
+  while($row = mysqli_fetch_assoc($data)){
+    $nama = $row['nama'];
+    $jabatan = $row['jabatan'];
+    $email = $row['email'];
+  }
+}else {
+  $link = "index.php?judul=$judul";
+  $nama = "";
+  $jabatan = "";
+  $email = "";
+}
 
 
 ?>
@@ -35,28 +56,28 @@
   </div>
 </nav>
 <div class="container pt-4" style="padding-right: 30%">
-<h3 style="margin-top: 40px">Tambah Pejabat</h3>
+<h3 style="margin-top: 40px"><?= $judul; ?> Pejabat</h3>
 <br>
 
-<form method="post" action="index.php">
+<form method="post" action="<?= $link ?>">
     <div class="mb-3">
         <label for="nama" class="form-label">Nama</label>
-        <input type="text" class="form-control" id="nama" name="nama">
+        <input type="text" class="form-control" id="nama" name="nama" value="<?= $nama; ?>"/>
     </div>
 
     <div class="mb-3">
         <label for="jabatan" class="form-label">Jabatan</label>
-        <input type="text" class="form-control" id="jabatan" name="jabatan">
+        <input type="text" class="form-control" id="jabatan" name="jabatan" value="<?= $jabatan; ?>">
     </div>
 
     <div class="mb-3">
       <label for="exampleInputEmail1" class="form-label">Email address</label>
-      <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="email">
+      <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="email" value="<?= $email; ?>">
       <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
     </div>
   <button type="submit" class="btn btn-dark">
   <i class="fa-solid fa-plus"></i>  
-  Tambah</button>
+  <?= $judul; ?></button>
 </form>
 
 
